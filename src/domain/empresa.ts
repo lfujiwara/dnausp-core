@@ -1,8 +1,8 @@
 import { CNPJ } from './cnpj';
-import { randomUUID } from 'crypto';
 import { Result } from 'typescript-monads';
 import { CNAE } from './cnae';
 import { Faturamento } from './faturamento';
+import { v4 } from 'uuid';
 
 export class Empresa {
   id: string;
@@ -79,7 +79,7 @@ export class Empresa {
 
     return Result.ok(
       new Empresa({
-        id: randomUUID(),
+        id: v4(),
         ...data,
         faturamentos: data.faturamentos || [],
       }),
