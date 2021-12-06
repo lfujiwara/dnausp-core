@@ -1,5 +1,5 @@
 import { Result } from 'typescript-monads';
-import { Empresa, CNPJ, CNAE } from '@domain';
+import { CNAE, CNPJ, Empresa, Faturamento } from '@domain';
 import { EmpresaDbPort } from '@app/ports';
 
 export interface UpsertEmpresaMutationInput {
@@ -49,7 +49,10 @@ export class UpsertEmpresaMutation {
       errors.push(anoDeFundacaoResult.unwrapFail());
 
     const faturamentosResult = Empresa.validateFaturamentos(
-      input.faturamentos || [],
+      input.faturamentos
+        .map((f) => Faturamento.create(f.anoFiscal, f.valor))
+        .filter((f) => f.isOk())
+        .map((f) => f.unwrap()) || [],
     );
     if (faturamentosResult.isFail())
       errors.push(...faturamentosResult.unwrapFail());
