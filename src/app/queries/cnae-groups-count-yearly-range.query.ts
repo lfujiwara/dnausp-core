@@ -2,8 +2,8 @@ import { CnaeGroupsCountQueryInput, CnaeGroupsCountQueryOutput } from '@app';
 
 export type CnaeGroupsCountYearlyRangeQueryOutput = {
   year: number;
-  values: CnaeGroupsCountQueryOutput[];
-};
+  value: CnaeGroupsCountQueryOutput;
+}[];
 
 export abstract class CnaeGroupsCountYearlyRangeQuery {
   abstract execute(
