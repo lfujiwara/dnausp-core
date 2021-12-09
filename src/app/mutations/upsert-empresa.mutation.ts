@@ -26,10 +26,10 @@ export class UpsertEmpresaMutation {
   ): Promise<Result<Empresa, string[]>> {
     const errors: string[] = [];
 
-    const cnpjResult = CNPJ.create(input.cnpj);
+    const cnpjResult = CNPJ.create(input.cnpj + '');
     if (cnpjResult.isFail()) errors.push(cnpjResult.unwrapFail());
 
-    const atividadePrincipalResult = CNAE.create(input.atividadePrincipal);
+    const atividadePrincipalResult = CNAE.create(input.atividadePrincipal + '');
     if (atividadePrincipalResult.isFail())
       errors.push(atividadePrincipalResult.unwrapFail());
 
@@ -49,7 +49,7 @@ export class UpsertEmpresaMutation {
       errors.push(anoDeFundacaoResult.unwrapFail());
 
     const faturamentosResult = Empresa.validateFaturamentos(
-      input.faturamentos
+      (input.faturamentos || [])
         .map((f) => Faturamento.create(f.anoFiscal, f.valor))
         .filter((f) => f.isOk())
         .map((f) => f.unwrap()) || [],

@@ -26,6 +26,8 @@ export class RemoveFaturamentoMutation {
       faturamento.anoFiscal,
     ]);
 
+    if (result.isFail()) return Result.fail([result.unwrapFail()]);
+
     return Result.ok(result.unwrap());
   }
 }

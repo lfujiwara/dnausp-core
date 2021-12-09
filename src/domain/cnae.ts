@@ -5,7 +5,7 @@ export class CNAE {
   private cnae: string;
 
   constructor(cnae) {
-    this.set(CNAE.unformatCNAE(cnae));
+    this.set(CNAE.unFormat(cnae));
   }
 
   static create(cnae): Result<CNAE, string> {
@@ -13,12 +13,12 @@ export class CNAE {
     return Result.ok(new CNAE(cnae));
   }
 
-  static unformatCNAE(cnae): string {
+  static unFormat(cnae): string {
     return cnae.replace(/\D/g, '');
   }
 
-  static formatCNAE(cnae: string) {
-    return cnae.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1.$2.$3/$4');
+  static format(cnae: string) {
+    return cnae.replace(/(\d{4})(\d)(\d{2})/, '$1-$2/$3');
   }
 
   static getSecao(cnae: string) {
@@ -38,7 +38,7 @@ export class CNAE {
   }
 
   static validate(cnae: string): boolean {
-    return !!data.subclasses[CNAE.unformatCNAE(cnae)];
+    return !!data.subclasses[CNAE.unFormat(cnae)];
   }
 
   public get() {
@@ -47,7 +47,15 @@ export class CNAE {
 
   public set(cnae: string) {
     if (!CNAE.validate(cnae)) throw new Error('CNAE inválido');
-    this.cnae = cnae;
+    this.cnae = CNAE.unFormat(cnae);
+  }
+
+  public format() {
+    return CNAE.format(this.cnae);
+  }
+
+  public unFormat() {
+    return CNAE.unFormat(this.cnae);
   }
 }
 

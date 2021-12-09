@@ -29,6 +29,19 @@ export class Empresa {
     situacao?: string;
     faturamentos: Faturamento[];
   }) {
+    if (empresa.estrangeira && !empresa.idEstrangeira)
+      throw new Error('Empresa estrangeira sem id estrangeira');
+    if (!empresa.estrangeira && !empresa.cnpj)
+      throw new Error('Empresa não estrangeira sem cnpj');
+    if (!empresa.nomeFantasia && !empresa.razaoSocial)
+      throw new Error('Empresa sem nome ou razão social');
+
+    const faturamentosResult = Empresa.validateFaturamentos(
+      empresa.faturamentos || [],
+    );
+    if (faturamentosResult.isFail())
+      throw new Error(...faturamentosResult.unwrapFail());
+
     this.id = empresa.id;
     this.idEstrangeira = empresa.idEstrangeira;
     this.estrangeira = empresa.estrangeira;
@@ -42,7 +55,7 @@ export class Empresa {
     this._faturamentos = empresa.faturamentos;
   }
 
-  _faturamentos: Faturamento[];
+  private _faturamentos: Faturamento[];
 
   public get faturamentos(): Faturamento[] {
     return this._faturamentos;

@@ -9,7 +9,8 @@
     "prepare": "husky install",
     "build": "ttsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\" --fix"
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "test": "jest --coverage"
   },
   "keywords": [],
   "author": "Lucas Fujiwara <lucastfujiwara@gmail.com>",

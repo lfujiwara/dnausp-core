@@ -4,7 +4,7 @@ export class CNPJ {
   private cnpj: string;
 
   constructor(cnpj: string) {
-    this.set(CNPJ.unformatCNPJ(cnpj));
+    this.set(CNPJ.unFormat(cnpj));
   }
 
   static create(cnpj: string): Result<CNPJ, string> {
@@ -12,15 +12,15 @@ export class CNPJ {
     return Result.ok(new CNPJ(cnpj));
   }
 
-  static unformatCNPJ(cnpj: string) {
-    return cnpj.replace(/[^\d]+/g, '');
-  }
-
-  static formatCNPJ(cnpj: string) {
+  static format(cnpj: string) {
     return cnpj.replace(
       /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g,
       '$1.$2.$3/$4-$5',
     );
+  }
+
+  static unFormat(cnpj: string) {
+    return cnpj.replace(/[^\d]+/g, '');
   }
 
   public get(): string {
@@ -29,7 +29,15 @@ export class CNPJ {
 
   public set(cnpj: string): void {
     if (!_validateCNPJ(cnpj)) throw new Error('CNPJ inválido');
-    this.cnpj = CNPJ.unformatCNPJ(cnpj);
+    this.cnpj = CNPJ.unFormat(cnpj);
+  }
+
+  public format() {
+    return CNPJ.format(this.cnpj);
+  }
+
+  public unFormat() {
+    return CNPJ.unFormat(this.cnpj);
   }
 }
 

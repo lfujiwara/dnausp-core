@@ -1,5 +1,5 @@
 import { EmpresaDbPort } from '@app/ports';
-import { Faturamento, Empresa } from '@domain';
+import { Empresa, Faturamento } from '@domain';
 import { Result } from 'typescript-monads';
 
 export interface AddFaturamentoMutationInput {
@@ -29,11 +29,12 @@ export class AddFaturamentoMutation {
     if (addFaturamentoResult.isFail())
       return Result.fail([addFaturamentoResult.unwrapFail()]);
 
-    const updateEmpresaResult = await this.port.addFaturamentoToEmpresa(
-      empresa.id,
-      [faturamentoResult.unwrap()],
-    );
+    const result = await this.port.addFaturamentoToEmpresa(empresa.id, [
+      faturamentoResult.unwrap(),
+    ]);
 
-    return Result.ok(updateEmpresaResult.unwrap());
+    if (result.isFail()) return Result.fail([result.unwrapFail()]);
+
+    return Result.ok(result.unwrap());
   }
 }
