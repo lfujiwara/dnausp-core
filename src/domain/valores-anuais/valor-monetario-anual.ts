@@ -5,7 +5,7 @@ export class ValorMonetarioAnual extends RegistroAnual {
   public readonly valor: number;
   public readonly anoFiscal: number;
 
-  constructor(anoFiscal: number, valor: number, freeze: boolean = true) {
+  constructor(anoFiscal: number, valor: number, freeze = true) {
     const valorResult = ValorMonetarioAnual.validateValor(valor);
 
     if (valorResult.isFail()) throw new Error(valorResult.unwrapFail());

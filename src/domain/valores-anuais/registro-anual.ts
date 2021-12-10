@@ -3,7 +3,7 @@ import { Result } from 'typescript-monads';
 export class RegistroAnual {
   public readonly anoFiscal: number;
 
-  constructor(anoFiscal: number, freeze: boolean = true) {
+  constructor(anoFiscal: number, freeze = true) {
     const anoFiscalResult = RegistroAnual.validateAno(anoFiscal);
 
     if (anoFiscalResult.isFail())
