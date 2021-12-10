@@ -32,10 +32,7 @@ export class AddFaturamentoMutation {
     if (addFaturamentoResult.isFail())
       return Result.fail([addFaturamentoResult.unwrapFail()]);
 
-    const result = await this.port.addFaturamentoToEmpresa(empresa.id, [
-      faturamentoResult.unwrap(),
-    ]);
-
+    const result = await this.port.save(empresa);
     if (result.isFail()) return Result.fail([result.unwrapFail()]);
 
     return Result.ok(result.unwrap());

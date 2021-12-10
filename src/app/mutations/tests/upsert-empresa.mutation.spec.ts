@@ -1,15 +1,8 @@
 import { UpsertEmpresaMutation, UpsertEmpresaMutationInput } from '@app';
 import { Result } from 'typescript-monads';
-import { CNPJ, Empresa } from '@domain';
+import { CNPJ, EmpresaFactory } from '@domain';
 
 describe('Upsert empresa mutation', () => {
-  const port = {
-    upsertEmpresa: jest
-      .fn()
-      .mockImplementation((x) => Promise.resolve(Result.ok(x))),
-  };
-  const mutation = new UpsertEmpresaMutation(port as any);
-
   const input: UpsertEmpresaMutationInput = {
     cnpj: '43.009.980/0001-04',
     anoFundacao: 2010,
@@ -20,67 +13,50 @@ describe('Upsert empresa mutation', () => {
     razaoSocial: 'Empresa Teste Ltda',
   };
 
+  const sampleEmpresa = EmpresaFactory.create(input).unwrap();
+
+  const port = {
+    findOneByIdentifiers: jest.fn().mockResolvedValue(Result.ok(sampleEmpresa)),
+    remove: jest.fn().mockResolvedValue(Result.ok(undefined)),
+    save: jest.fn().mockImplementation((x) => Promise.resolve(Result.ok(x))),
+  };
+  const mutation = new UpsertEmpresaMutation(port as any);
+
   describe('Inputs', () => {
     beforeEach(() => {
-      Object.values(port).forEach((mockFn) => mockFn.mockClear());
+      jest.clearAllMocks();
     });
 
-    test('OK Input w/o revenues', async () => {
-      port.upsertEmpresa.mockImplementationOnce((x) => Result.ok(x));
+    test('Data persistence w/o previous data', async () => {
+      port.findOneByIdentifiers.mockResolvedValueOnce(Result.fail('Not found'));
 
       const result = await mutation.mutate(input);
       expect(result.isOk()).toBeTruthy();
 
       const empresa = result.unwrap();
+
       expect(CNPJ.format(empresa.cnpj.get())).toBe(input.cnpj);
       expect(empresa.anoFundacao).toBe(input.anoFundacao);
       expect(empresa.atividadePrincipal.get()).toBe(input.atividadePrincipal);
+
+      expect(port.findOneByIdentifiers).toHaveBeenCalledTimes(1);
+      expect(port.findOneByIdentifiers).toHaveBeenCalledWith(
+        expect.objectContaining({
+          cnpj: expect.stringMatching(sampleEmpresa.cnpj.unFormat()),
+        }),
+        input.idEstrangeira,
+      );
+      expect(port.save).toHaveBeenCalledTimes(1);
+      expect(port.remove).not.toHaveBeenCalled();
     });
 
-    test('OK Input w/ revenues', async () => {
-      port.upsertEmpresa.mockImplementationOnce((x) => Result.ok(x));
-
-      const empresa = (
-        await mutation.mutate(
-          Object.assign(input, {
-            faturamentos: [
-              { valor: 6000000, anoFiscal: 2018 },
-              { valor: 12000000, anoFiscal: 2019 },
-              { valor: 2900000, anoFiscal: 2020 },
-            ],
-          }),
-        )
-      ).unwrap();
-
-      expect(empresa.faturante.valores.length).toBe(3);
-      empresa.faturante.valores.forEach((f) => {
-        const equivalent = input.faturamentos.find(
-          (x) => x.anoFiscal === f.anoFiscal,
-        );
-        expect(equivalent).toBeDefined();
-        expect(f.valor).toBe(equivalent.valor);
-      });
-    });
-  });
-
-  describe('DB Port behavior', () => {
-    beforeEach(() => {
-      Object.values(port).forEach((mockFn) => mockFn.mockClear());
-    });
-
-    test('Calls the upsert method', async () => {
-      port.upsertEmpresa.mockImplementationOnce((x) => Result.ok(x));
-
-      await mutation.mutate(input);
-      expect(port.upsertEmpresa).toHaveBeenCalledTimes(1);
-      expect(port.upsertEmpresa).toHaveBeenCalledWith(expect.any(Empresa));
-    });
-
-    test('Handles a failed upsert gracefully', async () => {
-      port.upsertEmpresa.mockImplementationOnce(() => Result.fail('DB Error'));
-
+    test('OK Input w/ already existing', async () => {
       const result = await mutation.mutate(input);
-      expect(result.isFail()).toBeTruthy();
+      expect(result.isOk()).toBeTruthy();
+
+      const empresa = result.unwrap();
+      expect(empresa.id).toBe(sampleEmpresa.id);
+      expect(port.remove).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -18,8 +18,8 @@ describe('Add faturamento', () => {
   const deps = () => {
     const empresa = makeSampleEmpresa();
     const port = {
-      addFaturamentoToEmpresa: jest.fn().mockResolvedValue(Result.ok(empresa)),
       getEmpresa: jest.fn().mockResolvedValue(Result.ok(empresa)),
+      save: jest.fn().mockImplementation((x) => Promise.resolve(Result.ok(x))),
     };
 
     const mutation = new AddFaturamentoMutation(port as any);
@@ -39,15 +39,13 @@ describe('Add faturamento', () => {
     });
 
     expect(result.isFail()).toBeTruthy();
-    expect(port.addFaturamentoToEmpresa).not.toHaveBeenCalled();
+    expect(port.save).not.toHaveBeenCalled();
   });
 
   test('Handle port failure', async () => {
     const { mutation, port, empresa } = deps();
 
-    port.addFaturamentoToEmpresa.mockResolvedValueOnce(
-      Result.fail('Port failure'),
-    );
+    port.save.mockResolvedValueOnce(Result.fail('Port failure'));
 
     const input = {
       empresaId: empresa.id,
@@ -58,17 +56,7 @@ describe('Add faturamento', () => {
 
     expect(port.getEmpresa).toHaveBeenCalledWith(empresa.id);
     expect(port.getEmpresa).toHaveBeenCalledTimes(1);
-
-    expect(port.addFaturamentoToEmpresa).toHaveBeenCalledTimes(1);
-    expect(port.addFaturamentoToEmpresa).toHaveBeenCalledWith(
-      input.empresaId,
-      expect.arrayContaining([
-        expect.objectContaining({
-          anoFiscal: input.anoFiscal,
-          valor: input.valor,
-        }),
-      ]),
-    );
+    expect(port.save).toHaveBeenCalledTimes(1);
 
     expect(result.isFail()).toBeTruthy();
   });
@@ -85,14 +73,17 @@ describe('Add faturamento', () => {
 
     expect(result.isOk()).toBeTruthy();
     expect(port.getEmpresa).toHaveBeenCalledWith(input.empresaId);
-    expect(port.addFaturamentoToEmpresa).toHaveBeenCalledWith(
-      input.empresaId,
-      expect.arrayContaining([
-        expect.objectContaining({
-          anoFiscal: input.anoFiscal,
-          valor: input.valor,
-        }),
-      ]),
+    expect(port.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        faturante: {
+          _valores: expect.arrayContaining([
+            expect.objectContaining({
+              anoFiscal: input.anoFiscal,
+              valor: input.valor,
+            }),
+          ]),
+        },
+      }),
     );
   });
 });

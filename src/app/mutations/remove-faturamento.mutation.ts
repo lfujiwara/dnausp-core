@@ -17,17 +17,12 @@ export class RemoveFaturamentoMutation {
     if (empresaResult.isFail()) return Result.fail(['Empresa não encontrada']);
     const empresa = empresaResult.unwrap();
 
-    const faturamento = empresa.faturante.valores.find(
-      (f) => f.anoFiscal === input.anoFiscal,
-    );
-    if (!faturamento) return Result.fail(['Faturamento não encontrado']);
-
-    const result = await this.port.removeFaturamentoFromEmpresa(empresa.id, [
-      faturamento.anoFiscal,
-    ]);
-
+    const result = empresa.faturante.remove(input.anoFiscal);
     if (result.isFail()) return Result.fail([result.unwrapFail()]);
 
-    return Result.ok(result.unwrap());
+    const portResult = await this.port.save(empresa);
+    if (portResult.isFail()) return Result.fail([portResult.unwrapFail()]);
+
+    return Result.ok(portResult.unwrap());
   }
 }
