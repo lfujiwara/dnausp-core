@@ -61,7 +61,7 @@ describe('Empresa factory', () => {
     ).toBeTruthy();
 
     expect(
-      empresa.faturante.valores.every((x) =>
+      empresa.historicoFaturamentos.valores.every((x) =>
         input.faturamentos.some(matchAnoValor.bind(null, x)),
       ),
     ).toBeTruthy();

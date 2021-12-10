@@ -25,7 +25,7 @@ export class AddFaturamentoMutation {
     if (empresaResult.isFail()) return Result.fail(['Empresa não encontrada']);
 
     const empresa = empresaResult.unwrap();
-    const addFaturamentoResult = empresa.faturante.add(
+    const addFaturamentoResult = empresa.historicoFaturamentos.add(
       faturamentoResult.unwrap(),
     );
 

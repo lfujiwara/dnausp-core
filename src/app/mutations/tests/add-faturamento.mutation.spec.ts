@@ -1,4 +1,4 @@
-import { CNAE, CNPJ, Empresa, Faturante } from '@domain';
+import { CNAE, CNPJ, Empresa, HistoricoFaturamentos } from '@domain';
 import { Result } from 'typescript-monads';
 import { AddFaturamentoMutation } from '@app';
 
@@ -12,7 +12,7 @@ describe('Add faturamento', () => {
       anoFundacao: 2010,
       atividadePrincipal: new CNAE('7020400'),
       atividadeSecundaria: [],
-      faturante: new Faturante(),
+      historicoFaturamentos: new HistoricoFaturamentos(),
     }).unwrap();
 
   const deps = () => {
@@ -75,7 +75,7 @@ describe('Add faturamento', () => {
     expect(port.getEmpresa).toHaveBeenCalledWith(input.empresaId);
     expect(port.save).toHaveBeenCalledWith(
       expect.objectContaining({
-        faturante: {
+        historicoFaturamentos: {
           _valores: expect.arrayContaining([
             expect.objectContaining({
               anoFiscal: input.anoFiscal,

@@ -1,24 +1,30 @@
 import { Result } from 'typescript-monads';
 import { Faturamento, Investimento } from '@domain/valores-anuais';
-import { Faturante, HistoricoInvestimentos } from '@domain/agregados-anuais';
+import {
+  HistoricoFaturamentos,
+  HistoricoInvestimentos,
+} from '@domain/agregados-anuais';
 import { QuadroDeColaboradores } from '@domain/valores-anuais/quadro-de-colaboradores';
 import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
 
 export class AgregadosAnuaisFactory {
-  static validateFaturante(
+  static validateHistoricoFaturamentos(
     faturamentos: Faturamento[],
-  ): Result<Faturante, string> {
-    const faturamentosResult = Faturante.validateValores(faturamentos);
+  ): Result<HistoricoFaturamentos, string> {
+    const faturamentosResult =
+      HistoricoFaturamentos.validateValores(faturamentos);
     if (faturamentosResult.isFail())
       return Result.fail(faturamentosResult.unwrapFail());
     return Result.ok(undefined);
   }
 
-  static faturante(faturamentos: Faturamento[]): Result<Faturante, string> {
-    const faturamentosResult = Faturante.validateValores(faturamentos);
+  static historicoFaturamentos(
+    faturamentos: Faturamento[],
+  ): Result<HistoricoFaturamentos, string> {
+    const faturamentosResult = this.validateHistoricoFaturamentos(faturamentos);
     if (faturamentosResult.isFail())
       return Result.fail(faturamentosResult.unwrapFail());
-    return Result.ok(new Faturante(faturamentos));
+    return Result.ok(new HistoricoFaturamentos(faturamentos));
   }
 
   static validateHistoricoInvestimentos(

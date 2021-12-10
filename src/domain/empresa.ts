@@ -1,7 +1,10 @@
 import { Result } from 'typescript-monads';
 import { v4 } from 'uuid';
 import { CNAE } from '@domain/cnae';
-import { Faturante, HistoricoInvestimentos } from '@domain/agregados-anuais';
+import {
+  HistoricoFaturamentos,
+  HistoricoInvestimentos,
+} from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
 import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
 
@@ -16,7 +19,7 @@ export class Empresa {
   atividadePrincipal?: CNAE;
   atividadeSecundaria: CNAE[] = [];
   situacao?: string;
-  faturante: Faturante = new Faturante();
+  historicoFaturamentos: HistoricoFaturamentos = new HistoricoFaturamentos();
   historicoInvestimentos: HistoricoInvestimentos = new HistoricoInvestimentos();
   historicoQuadroDeColaboradores: HistoricoQuadroDeColaboradores =
     new HistoricoQuadroDeColaboradores();
@@ -32,7 +35,7 @@ export class Empresa {
     atividadePrincipal?: CNAE;
     atividadeSecundaria?: CNAE[];
     situacao?: string;
-    faturante?: Faturante;
+    historicoFaturamentos?: HistoricoFaturamentos;
     historicoInvestimentos?: HistoricoInvestimentos;
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
   }) {
@@ -53,7 +56,8 @@ export class Empresa {
     this.atividadePrincipal = data.atividadePrincipal;
     this.atividadeSecundaria = data.atividadeSecundaria || [];
     this.situacao = data.situacao;
-    this.faturante = data.faturante || this.faturante;
+    this.historicoFaturamentos =
+      data.historicoFaturamentos || this.historicoFaturamentos;
     this.historicoInvestimentos =
       data.historicoInvestimentos || this.historicoInvestimentos;
     this.historicoQuadroDeColaboradores =
@@ -71,7 +75,7 @@ export class Empresa {
     atividadePrincipal?: CNAE;
     atividadeSecundaria: CNAE[];
     situacao?: string;
-    faturante?: Faturante;
+    historicoFaturamentos?: HistoricoFaturamentos;
     historicoInvestimentos?: HistoricoInvestimentos;
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
   }): Result<Empresa, string[]> {

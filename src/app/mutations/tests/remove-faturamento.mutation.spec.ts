@@ -21,7 +21,9 @@ describe('Remove faturamento', () => {
       anoFundacao: 2010,
       atividadePrincipal: new CNAE('7020400'),
       atividadeSecundaria: [],
-      faturante: AgregadosAnuaisFactory.faturante([faturamento]).unwrap(),
+      historicoFaturamentos: AgregadosAnuaisFactory.historicoFaturamentos([
+        faturamento,
+      ]).unwrap(),
     });
 
     const port = {
@@ -71,7 +73,7 @@ describe('Remove faturamento', () => {
     expect(port.getEmpresa).toHaveBeenCalledWith(input.empresaId);
     expect(port.save).toHaveBeenCalledWith(
       expect.not.objectContaining({
-        faturante: {
+        historicoFaturamentos: {
           _valores: expect.arrayContaining([
             expect.objectContaining({
               anoFiscal: input.anoFiscal,

@@ -17,7 +17,7 @@ export class RemoveFaturamentoMutation {
     if (empresaResult.isFail()) return Result.fail(['Empresa não encontrada']);
     const empresa = empresaResult.unwrap();
 
-    const result = empresa.faturante.remove(input.anoFiscal);
+    const result = empresa.historicoFaturamentos.remove(input.anoFiscal);
     if (result.isFail()) return Result.fail([result.unwrapFail()]);
 
     const portResult = await this.port.save(empresa);

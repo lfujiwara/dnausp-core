@@ -59,8 +59,9 @@ export class EmpresaFactory {
     if (anoDeFundacaoResult.isFail())
       errors.push(anoDeFundacaoResult.unwrapFail());
 
-    const faturanteResult = this.extractHistoricoFaturamento(input);
-    if (faturanteResult.isFail()) errors.push(faturanteResult.unwrapFail());
+    const historicoFaturamentosResult = this.extractHistoricoFaturamento(input);
+    if (historicoFaturamentosResult.isFail())
+      errors.push(historicoFaturamentosResult.unwrapFail());
 
     const historicoInvestimentosResult =
       this.extractHistoricoInvestimentos(input);
@@ -86,7 +87,7 @@ export class EmpresaFactory {
       situacao: input.situacao,
       estrangeira: !!input.estrangeira,
       idEstrangeira: input.idEstrangeira,
-      faturante: faturanteResult.unwrap(),
+      historicoFaturamentos: historicoFaturamentosResult.unwrap(),
       historicoInvestimentos: historicoInvestimentosResult.unwrap(),
       historicoQuadroDeColaboradores:
         historicoQuadroDeColaboradoresResult.unwrap(),
@@ -104,7 +105,7 @@ export class EmpresaFactory {
         .filter((f) => f.isOk())
         .map((f) => f.unwrap()) || [];
 
-    return AgregadosAnuaisFactory.faturante(faturamentos);
+    return AgregadosAnuaisFactory.historicoFaturamentos(faturamentos);
   }
 
   private static extractHistoricoInvestimentos(
