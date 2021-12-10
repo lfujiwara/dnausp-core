@@ -24,7 +24,7 @@ describe('Empresa factory', () => {
     ],
     nomeFantasia: 'Empresa Teste',
     razaoSocial: 'Empresa Teste Ltda',
-    investimentos: [
+    historicoInvestimentos: [
       {
         anoFiscal: 2009,
         valor: 100 * 1000 * 100,
@@ -67,8 +67,8 @@ describe('Empresa factory', () => {
     ).toBeTruthy();
 
     expect(
-      empresa.perfilInvestimento.valores.every((x) =>
-        input.investimentos.some(matchAnoValorOrigem.bind(null, x)),
+      empresa.historicoInvestimentos.valores.every((x) =>
+        input.historicoInvestimentos.some(matchAnoValorOrigem.bind(null, x)),
       ),
     ).toBeTruthy();
 

@@ -22,7 +22,7 @@ export interface EmpresaFactoryCreateInput {
     anoFiscal: number;
     valor: number;
   }[];
-  investimentos?: {
+  historicoInvestimentos?: {
     anoFiscal: number;
     valor: number;
     origem: string;
@@ -62,9 +62,10 @@ export class EmpresaFactory {
     const faturanteResult = this.extractHistoricoFaturamento(input);
     if (faturanteResult.isFail()) errors.push(faturanteResult.unwrapFail());
 
-    const perfilInvestimentoResult = this.extractPerfilInvestimento(input);
-    if (perfilInvestimentoResult.isFail())
-      errors.push(...perfilInvestimentoResult.unwrapFail());
+    const historicoInvestimentosResult =
+      this.extractHistoricoInvestimentos(input);
+    if (historicoInvestimentosResult.isFail())
+      errors.push(...historicoInvestimentosResult.unwrapFail());
 
     const historicoQuadroDeColaboradoresResult =
       this.extractHistoricoQuadroDeColaboradores(input);
@@ -86,7 +87,7 @@ export class EmpresaFactory {
       estrangeira: !!input.estrangeira,
       idEstrangeira: input.idEstrangeira,
       faturante: faturanteResult.unwrap(),
-      perfilInvestimento: perfilInvestimentoResult.unwrap(),
+      historicoInvestimentos: historicoInvestimentosResult.unwrap(),
       historicoQuadroDeColaboradores:
         historicoQuadroDeColaboradoresResult.unwrap(),
     });
@@ -106,9 +107,11 @@ export class EmpresaFactory {
     return AgregadosAnuaisFactory.faturante(faturamentos);
   }
 
-  private static extractPerfilInvestimento(input: EmpresaFactoryCreateInput) {
+  private static extractHistoricoInvestimentos(
+    input: EmpresaFactoryCreateInput,
+  ) {
     const investimentos =
-      (input.investimentos || [])
+      (input.historicoInvestimentos || [])
         .map((f) =>
           RegistrosAnuaisFactory.investimento(
             f.anoFiscal,
@@ -118,7 +121,7 @@ export class EmpresaFactory {
         )
         .filter((f) => f.isOk())
         .map((f) => f.unwrap()) || [];
-    return AgregadosAnuaisFactory.perfilInvestimento(investimentos);
+    return AgregadosAnuaisFactory.historicoInvestimentos(investimentos);
   }
 
   private static extractHistoricoQuadroDeColaboradores(

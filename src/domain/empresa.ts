@@ -1,7 +1,7 @@
 import { Result } from 'typescript-monads';
 import { v4 } from 'uuid';
 import { CNAE } from '@domain/cnae';
-import { Faturante, PerfilInvestimento } from '@domain/agregados-anuais';
+import { Faturante, HistoricoInvestimentos } from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
 import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
 
@@ -17,7 +17,7 @@ export class Empresa {
   atividadeSecundaria: CNAE[] = [];
   situacao?: string;
   faturante: Faturante = new Faturante();
-  perfilInvestimento: PerfilInvestimento = new PerfilInvestimento();
+  historicoInvestimentos: HistoricoInvestimentos = new HistoricoInvestimentos();
   historicoQuadroDeColaboradores: HistoricoQuadroDeColaboradores =
     new HistoricoQuadroDeColaboradores();
 
@@ -33,7 +33,7 @@ export class Empresa {
     atividadeSecundaria?: CNAE[];
     situacao?: string;
     faturante?: Faturante;
-    perfilInvestimento?: PerfilInvestimento;
+    historicoInvestimentos?: HistoricoInvestimentos;
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
   }) {
     if (data.estrangeira && !data.idEstrangeira)
@@ -54,8 +54,8 @@ export class Empresa {
     this.atividadeSecundaria = data.atividadeSecundaria || [];
     this.situacao = data.situacao;
     this.faturante = data.faturante || this.faturante;
-    this.perfilInvestimento =
-      data.perfilInvestimento || this.perfilInvestimento;
+    this.historicoInvestimentos =
+      data.historicoInvestimentos || this.historicoInvestimentos;
     this.historicoQuadroDeColaboradores =
       data.historicoQuadroDeColaboradores ||
       this.historicoQuadroDeColaboradores;
@@ -72,7 +72,7 @@ export class Empresa {
     atividadeSecundaria: CNAE[];
     situacao?: string;
     faturante?: Faturante;
-    perfilInvestimento?: PerfilInvestimento;
+    historicoInvestimentos?: HistoricoInvestimentos;
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
   }): Result<Empresa, string[]> {
     const errors: string[] = [];
