@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import { CNAE } from '@domain/cnae';
 import { Faturante, PerfilInvestimento } from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
+import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
 
 export class Empresa {
   id: string;
@@ -17,6 +18,8 @@ export class Empresa {
   situacao?: string;
   faturante: Faturante = new Faturante();
   perfilInvestimento: PerfilInvestimento = new PerfilInvestimento();
+  historicoQuadroDeColaboradores: HistoricoQuadroDeColaboradores =
+    new HistoricoQuadroDeColaboradores();
 
   constructor(data: {
     id: string;
@@ -31,6 +34,7 @@ export class Empresa {
     situacao?: string;
     faturante?: Faturante;
     perfilInvestimento?: PerfilInvestimento;
+    historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
   }) {
     if (data.estrangeira && !data.idEstrangeira)
       throw new Error('Empresa estrangeira sem id estrangeira');
@@ -52,6 +56,9 @@ export class Empresa {
     this.faturante = data.faturante || this.faturante;
     this.perfilInvestimento =
       data.perfilInvestimento || this.perfilInvestimento;
+    this.historicoQuadroDeColaboradores =
+      data.historicoQuadroDeColaboradores ||
+      this.historicoQuadroDeColaboradores;
   }
 
   static create(data: {
@@ -66,6 +73,7 @@ export class Empresa {
     situacao?: string;
     faturante?: Faturante;
     perfilInvestimento?: PerfilInvestimento;
+    historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
   }): Result<Empresa, string[]> {
     const errors: string[] = [];
     if (data.estrangeira && !data.idEstrangeira)

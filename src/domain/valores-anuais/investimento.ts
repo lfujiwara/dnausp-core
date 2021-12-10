@@ -1,5 +1,5 @@
 import { Result } from 'typescript-monads';
-import { ValorMonetarioAnual } from '@domain/valores-anuais/valor-monetario-anual';
+import { ValorInteiroAnual } from '@domain/valores-anuais/valor-inteiro-anual';
 
 export enum OrigemInvestimento {
   'PROPRIO' = 'PROPRIO',
@@ -10,7 +10,7 @@ export enum OrigemInvestimento {
   'OUTROS' = 'OUTROS',
 }
 
-export class Investimento extends ValorMonetarioAnual {
+export class Investimento extends ValorInteiroAnual {
   public readonly origem: OrigemInvestimento;
 
   constructor(anoFiscal: number, value: number, origem: OrigemInvestimento) {
