@@ -1,4 +1,10 @@
-import { CNAE, CNPJ, Empresa, Faturamento, Faturante } from '@domain';
+import {
+  AgregadosAnuaisFactory,
+  CNAE,
+  CNPJ,
+  Empresa,
+  Faturamento,
+} from '@domain';
 import { v4 } from 'uuid';
 import { Result } from 'typescript-monads';
 import { RemoveFaturamentoMutation } from '@app';
@@ -15,7 +21,7 @@ describe('Remove faturamento', () => {
       anoFundacao: 2010,
       atividadePrincipal: new CNAE('7020400'),
       atividadeSecundaria: [],
-      faturante: Faturante.create([faturamento]).unwrap(),
+      faturante: AgregadosAnuaisFactory.faturante([faturamento]).unwrap(),
     });
 
     const port = {
