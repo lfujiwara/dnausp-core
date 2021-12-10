@@ -52,11 +52,12 @@ describe('Upsert empresa mutation', () => {
         )
       ).unwrap();
 
-      expect(empresa.faturamentos.length).toBe(3);
-      empresa.faturamentos.forEach((f) => {
+      expect(empresa.faturante.valores.length).toBe(3);
+      empresa.faturante.valores.forEach((f) => {
         const equivalent = input.faturamentos.find(
           (x) => x.anoFiscal === f.anoFiscal,
         );
+        expect(equivalent).toBeDefined();
         expect(f.valor).toBe(equivalent.valor);
       });
     });

@@ -10,7 +10,8 @@
     "build": "ttsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "test:ci": "jest --ci --runInBand --coverage"
   },
   "keywords": [],
   "author": "Lucas Fujiwara <lucastfujiwara@gmail.com>",

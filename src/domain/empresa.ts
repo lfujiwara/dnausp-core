@@ -1,64 +1,53 @@
-import { CNPJ } from './cnpj';
 import { Result } from 'typescript-monads';
-import { CNAE } from './cnae';
-import { Faturamento } from './faturamento';
 import { v4 } from 'uuid';
+import { CNAE } from '@domain/cnae';
+import { Faturante } from '@domain/agregados-anuais';
+import { CNPJ } from '@domain/cnpj';
 
 export class Empresa {
   id: string;
   idEstrangeira?: number;
-  estrangeira: boolean;
+  estrangeira = false;
   cnpj?: CNPJ;
   razaoSocial?: string;
   nomeFantasia?: string;
-  anoFundacao?: number;
+  anoFundacao: number;
   atividadePrincipal?: CNAE;
-  atividadeSecundaria: CNAE[];
+  atividadeSecundaria: CNAE[] = [];
   situacao?: string;
+  faturante: Faturante = new Faturante();
 
-  constructor(empresa: {
+  constructor(data: {
     id: string;
     idEstrangeira?: number;
-    estrangeira: boolean;
+    estrangeira?: boolean;
     cnpj?: CNPJ;
     razaoSocial?: string;
     nomeFantasia?: string;
-    anoFundacao?: number;
+    anoFundacao: number;
     atividadePrincipal?: CNAE;
-    atividadeSecundaria: CNAE[];
+    atividadeSecundaria?: CNAE[];
     situacao?: string;
-    faturamentos: Faturamento[];
+    faturante: Faturante;
   }) {
-    if (empresa.estrangeira && !empresa.idEstrangeira)
+    if (data.estrangeira && !data.idEstrangeira)
       throw new Error('Empresa estrangeira sem id estrangeira');
-    if (!empresa.estrangeira && !empresa.cnpj)
+    if (!data.estrangeira && !data.cnpj)
       throw new Error('Empresa não estrangeira sem cnpj');
-    if (!empresa.nomeFantasia && !empresa.razaoSocial)
+    if (!data.nomeFantasia && !data.razaoSocial)
       throw new Error('Empresa sem nome ou razão social');
 
-    const faturamentosResult = Empresa.validateFaturamentos(
-      empresa.faturamentos || [],
-    );
-    if (faturamentosResult.isFail())
-      throw new Error(...faturamentosResult.unwrapFail());
-
-    this.id = empresa.id;
-    this.idEstrangeira = empresa.idEstrangeira;
-    this.estrangeira = empresa.estrangeira;
-    this.cnpj = empresa.cnpj;
-    this.razaoSocial = empresa.razaoSocial;
-    this.nomeFantasia = empresa.nomeFantasia;
-    this.anoFundacao = empresa.anoFundacao;
-    this.atividadePrincipal = empresa.atividadePrincipal;
-    this.atividadeSecundaria = empresa.atividadeSecundaria;
-    this.situacao = empresa.situacao;
-    this._faturamentos = empresa.faturamentos;
-  }
-
-  private _faturamentos: Faturamento[];
-
-  public get faturamentos(): Faturamento[] {
-    return this._faturamentos;
+    this.id = data.id;
+    this.idEstrangeira = data.idEstrangeira;
+    this.estrangeira = data.estrangeira;
+    this.cnpj = data.cnpj;
+    this.razaoSocial = data.razaoSocial;
+    this.nomeFantasia = data.nomeFantasia;
+    this.anoFundacao = data.anoFundacao;
+    this.atividadePrincipal = data.atividadePrincipal;
+    this.atividadeSecundaria = data.atividadeSecundaria || [];
+    this.situacao = data.situacao;
+    this.faturante = data.faturante;
   }
 
   static create(data: {
@@ -67,11 +56,11 @@ export class Empresa {
     cnpj?: CNPJ;
     razaoSocial?: string;
     nomeFantasia?: string;
-    anoFundacao?: number;
+    anoFundacao: number;
     atividadePrincipal?: CNAE;
     atividadeSecundaria: CNAE[];
     situacao?: string;
-    faturamentos?: Faturamento[];
+    faturante: Faturante;
   }): Result<Empresa, string[]> {
     const errors: string[] = [];
     if (data.estrangeira && !data.idEstrangeira)
@@ -81,20 +70,12 @@ export class Empresa {
     if (!data.nomeFantasia && !data.razaoSocial)
       errors.push('Empresa sem nome ou razão social');
 
-    const faturamentosResult = Empresa.validateFaturamentos(
-      data.faturamentos || [],
-    );
-    if (faturamentosResult.isFail())
-      errors.push(...faturamentosResult.unwrapFail());
-    else data.faturamentos = faturamentosResult.unwrap();
-
     if (errors.length > 0) return Result.fail(errors);
 
     return Result.ok(
       new Empresa({
         id: v4(),
         ...data,
-        faturamentos: data.faturamentos || [],
       }),
     );
   }
@@ -106,35 +87,5 @@ export class Empresa {
       return Result.fail('Ano de fundação inválido');
 
     return Result.ok(n);
-  }
-
-  static validateFaturamentos(
-    faturamentos: Faturamento[],
-  ): Result<Faturamento[], string[]> {
-    const anos = faturamentos.map((f) => f.anoFiscal);
-    const anoSet = new Set(anos);
-    if (anoSet.size !== anos.length)
-      return Result.fail(['Anos de faturamento repetidos']);
-
-    return Result.ok(faturamentos);
-  }
-
-  public addFaturamento(faturamento: Faturamento): Result<any, string> {
-    if (this.faturamentos.find((f) => f.anoFiscal === faturamento.anoFiscal))
-      return Result.fail('Faturamento para no ano fiscal já existente');
-
-    this._faturamentos.push(faturamento);
-    return Result.ok(undefined);
-  }
-
-  public removeFaturamento(anoFiscal: number): Result<any, string> {
-    const l1 = this.faturamentos.length;
-    this._faturamentos = this.faturamentos.filter(
-      (f) => f.anoFiscal !== anoFiscal,
-    );
-    const l2 = this.faturamentos.length;
-
-    if (l1 === l2) return Result.fail('Faturamento não encontrado');
-    return Result.ok(undefined);
   }
 }

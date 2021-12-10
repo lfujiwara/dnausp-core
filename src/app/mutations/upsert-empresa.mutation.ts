@@ -1,6 +1,12 @@
 import { Result } from 'typescript-monads';
-import { CNAE, CNPJ, Empresa, Faturamento } from '@domain';
-import { EmpresaDbPort } from '@app/ports';
+import {
+  CNAE,
+  CNPJ,
+  Empresa,
+  Faturante,
+  RegistrosAnuaisFactory,
+} from '@domain';
+import { EmpresaDbPort } from '@app';
 
 export interface UpsertEmpresaMutationInput {
   idEstrangeira?: number;
@@ -48,14 +54,17 @@ export class UpsertEmpresaMutation {
     if (anoDeFundacaoResult.isFail())
       errors.push(anoDeFundacaoResult.unwrapFail());
 
-    const faturamentosResult = Empresa.validateFaturamentos(
+    const faturamentos =
       (input.faturamentos || [])
-        .map((f) => Faturamento.create(f.anoFiscal, f.valor))
+        .map((f) => RegistrosAnuaisFactory.faturamento(f.anoFiscal, f.valor))
         .filter((f) => f.isOk())
-        .map((f) => f.unwrap()) || [],
-    );
+        .map((f) => f.unwrap()) || [];
+
+    const faturamentosResult = Faturante.validateValores(faturamentos);
     if (faturamentosResult.isFail())
-      errors.push(...faturamentosResult.unwrapFail());
+      errors.push(faturamentosResult.unwrapFail());
+
+    const faturanteResult = Faturante.create(faturamentos);
 
     if (errors.length > 0) return Result.fail(errors);
 
@@ -71,7 +80,7 @@ export class UpsertEmpresaMutation {
       situacao: input.situacao,
       estrangeira: !!input.estrangeira,
       idEstrangeira: input.idEstrangeira,
-      faturamentos: faturamentosResult.unwrap(),
+      faturante: faturanteResult.unwrap(),
     });
     if (empresaResult.isFail()) errors.push(...empresaResult.unwrapFail());
     if (errors.length > 0) return Result.fail(errors);

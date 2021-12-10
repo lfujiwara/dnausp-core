@@ -18,14 +18,26 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "paths": {
-      "@app": ["app"],
-      "@app/*": ["app/*"],
-      "@domain": ["domain"],
-      "@domain/*": ["domain/*"]
+      "@app/*": [
+        "app/*"
+      ],
+      "@app": [
+        "app"
+      ],
+      "@domain/*": [
+        "domain/*"
+      ],
+      "@domain": [
+        "domain"
+      ]
     },
     "plugins": [
-      { "transform": "typescript-transform-paths" }
+      {
+        "transform": "typescript-transform-paths"
+      }
     ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

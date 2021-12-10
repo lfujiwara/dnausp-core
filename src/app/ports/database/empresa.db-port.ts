@@ -1,6 +1,5 @@
-import { Empresa } from '@domain/empresa';
+import { Empresa, Faturamento } from '@domain';
 import { Result } from 'typescript-monads';
-import { Faturamento } from '@domain/faturamento';
 
 export abstract class EmpresaDbPort {
   abstract upsertEmpresa(empresa: Empresa): Promise<Result<Empresa, string>>;

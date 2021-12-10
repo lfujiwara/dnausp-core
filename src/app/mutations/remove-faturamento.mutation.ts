@@ -1,4 +1,4 @@
-import { EmpresaDbPort } from '@app/ports';
+import { EmpresaDbPort } from '@app';
 import { Result } from 'typescript-monads';
 import { Empresa } from '@domain';
 
@@ -17,7 +17,7 @@ export class RemoveFaturamentoMutation {
     if (empresaResult.isFail()) return Result.fail(['Empresa não encontrada']);
     const empresa = empresaResult.unwrap();
 
-    const faturamento = empresa.faturamentos.find(
+    const faturamento = empresa.faturante.valores.find(
       (f) => f.anoFiscal === input.anoFiscal,
     );
     if (!faturamento) return Result.fail(['Faturamento não encontrado']);

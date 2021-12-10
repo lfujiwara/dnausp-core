@@ -1,12 +1,10 @@
-import { CNAE, CNPJ, Empresa } from '@domain';
-import { v4 } from 'uuid';
+import { CNAE, CNPJ, Empresa, Faturante } from '@domain';
 import { Result } from 'typescript-monads';
 import { AddFaturamentoMutation } from '@app';
 
 describe('Add faturamento', () => {
   const makeSampleEmpresa = () =>
-    new Empresa({
-      id: v4(),
+    Empresa.create({
       estrangeira: false,
       nomeFantasia: 'Empresa Teste',
       razaoSocial: 'Empresa Teste Ltda',
@@ -14,8 +12,8 @@ describe('Add faturamento', () => {
       anoFundacao: 2010,
       atividadePrincipal: new CNAE('7020400'),
       atividadeSecundaria: [],
-      faturamentos: [],
-    });
+      faturante: new Faturante(),
+    }).unwrap();
 
   const deps = () => {
     const empresa = makeSampleEmpresa();

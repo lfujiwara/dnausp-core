@@ -1,5 +1,5 @@
-import { EmpresaDbPort } from '@app/ports';
-import { Empresa, Faturamento } from '@domain';
+import { EmpresaDbPort } from '@app';
+import { Empresa, RegistrosAnuaisFactory } from '@domain';
 import { Result } from 'typescript-monads';
 
 export interface AddFaturamentoMutationInput {
@@ -14,7 +14,10 @@ export class AddFaturamentoMutation {
   async execute(
     input: AddFaturamentoMutationInput,
   ): Promise<Result<Empresa, string[]>> {
-    const faturamentoResult = Faturamento.create(input.anoFiscal, input.valor);
+    const faturamentoResult = RegistrosAnuaisFactory.faturamento(
+      input.anoFiscal,
+      input.valor,
+    );
     if (faturamentoResult.isFail())
       return Result.fail(faturamentoResult.unwrapFail());
 
@@ -22,7 +25,7 @@ export class AddFaturamentoMutation {
     if (empresaResult.isFail()) return Result.fail(['Empresa não encontrada']);
 
     const empresa = empresaResult.unwrap();
-    const addFaturamentoResult = empresa.addFaturamento(
+    const addFaturamentoResult = empresa.faturante.add(
       faturamentoResult.unwrap(),
     );
 
