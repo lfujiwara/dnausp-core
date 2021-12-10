@@ -1,9 +1,9 @@
 import { Result } from 'typescript-monads';
 import { RegistroAnual } from '@domain/valores-anuais/registro-anual';
 
-export abstract class AgregadoAnual<T extends RegistroAnual> {
+export class AgregadoAnual<T extends RegistroAnual> {
   constructor(valores: T[] = []) {
-    this._valores = valores;
+    this.valores = valores;
   }
 
   private _valores: T[];
@@ -35,12 +35,12 @@ export abstract class AgregadoAnual<T extends RegistroAnual> {
   }
 
   public remove(anoFiscal: number) {
-    const oldLength = this._valores.length;
-    this._valores = this._valores.filter(
+    const oldLength = this.valores.length;
+    this.valores = this.valores.filter(
       (valor) => valor.anoFiscal !== anoFiscal,
     );
 
-    if (oldLength === this._valores.length)
+    if (oldLength === this.valores.length)
       return Result.fail(
         `Não foi encontrado um valor com o ano fiscal ${anoFiscal}`,
       );

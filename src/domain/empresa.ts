@@ -1,7 +1,7 @@
 import { Result } from 'typescript-monads';
 import { v4 } from 'uuid';
 import { CNAE } from '@domain/cnae';
-import { Faturante } from '@domain/agregados-anuais';
+import { Faturante, PerfilInvestimento } from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
 
 export class Empresa {
@@ -16,6 +16,7 @@ export class Empresa {
   atividadeSecundaria: CNAE[] = [];
   situacao?: string;
   faturante: Faturante = new Faturante();
+  perfilInvestimento: PerfilInvestimento = new PerfilInvestimento();
 
   constructor(data: {
     id: string;
@@ -28,7 +29,8 @@ export class Empresa {
     atividadePrincipal?: CNAE;
     atividadeSecundaria?: CNAE[];
     situacao?: string;
-    faturante: Faturante;
+    faturante?: Faturante;
+    perfilInvestimento?: PerfilInvestimento;
   }) {
     if (data.estrangeira && !data.idEstrangeira)
       throw new Error('Empresa estrangeira sem id estrangeira');
@@ -47,7 +49,9 @@ export class Empresa {
     this.atividadePrincipal = data.atividadePrincipal;
     this.atividadeSecundaria = data.atividadeSecundaria || [];
     this.situacao = data.situacao;
-    this.faturante = data.faturante;
+    this.faturante = data.faturante || this.faturante;
+    this.perfilInvestimento =
+      data.perfilInvestimento || this.perfilInvestimento;
   }
 
   static create(data: {
@@ -60,7 +64,8 @@ export class Empresa {
     atividadePrincipal?: CNAE;
     atividadeSecundaria: CNAE[];
     situacao?: string;
-    faturante: Faturante;
+    faturante?: Faturante;
+    perfilInvestimento?: PerfilInvestimento;
   }): Result<Empresa, string[]> {
     const errors: string[] = [];
     if (data.estrangeira && !data.idEstrangeira)

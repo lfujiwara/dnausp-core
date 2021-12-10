@@ -5,9 +5,11 @@ name: Typecheck, Lint, Test, Publish
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - '**'
   pull_request:
-    branches: [ master ]
+    branches:
+      - '**'
 
 jobs:
   typecheck-lint-test:
@@ -34,6 +36,7 @@ jobs:
   build-publish:
     needs: typecheck-lint-test
     runs-on: ubuntu-latest
+    if: github.event_name == 'tag' && startsWith(github.ref_name, 'release-v')
 
     strategy:
       matrix:
