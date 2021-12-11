@@ -3,7 +3,7 @@ import { Result } from 'typescript-monads';
 import { CNPJ, EmpresaFactory, OrigemInvestimento } from '@domain';
 import { EstadoIncubacao, IncubadoraUSP } from '@domain/incubacao';
 import { TipoVinculo } from '@domain/enums/tipo-vinculo';
-import { Instituto } from '@domain/enums/index';
+import { Instituto } from '@domain/enums/instituto';
 
 describe('Upsert empresa mutation', () => {
   const input: UpsertEmpresaMutationInput = {
@@ -68,6 +68,21 @@ describe('Upsert empresa mutation', () => {
   describe('Inputs', () => {
     beforeEach(() => {
       jest.clearAllMocks();
+    });
+
+    test('Handle invalid data', async () => {
+      const result = await mutation.mutate({
+        ...input,
+        cnpj: '1029301930102193013',
+      });
+      expect(result.isFail()).toBeTruthy();
+    });
+
+    test('Handle port failure', async () => {
+      port.save.mockResolvedValueOnce(Result.fail('Error'));
+
+      const result = await mutation.mutate(input);
+      expect(result.isFail()).toBeTruthy();
     });
 
     test('Data persistence w/o previous data', async () => {

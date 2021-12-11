@@ -8,15 +8,6 @@ import {
 import { QuadroDeColaboradores } from '@domain/valores-anuais/quadro-de-colaboradores';
 
 export class RegistrosAnuaisFactory {
-  static registroAnual(anoFiscal: number): Result<RegistroAnual, string[]> {
-    const validationResult =
-      RegistrosAnuaisFactory.validateRegistroAnual(anoFiscal);
-    if (validationResult.isFail())
-      return Result.fail(validationResult.unwrapFail());
-
-    return Result.ok(new RegistroAnual(anoFiscal));
-  }
-
   static validateRegistroAnual(anoFiscal: number): Result<void, string[]> {
     const anoFiscalResult = RegistroAnual.validateAno(anoFiscal);
 

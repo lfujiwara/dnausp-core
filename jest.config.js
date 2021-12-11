@@ -8,6 +8,13 @@ module.exports = {
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: '<rootDir>/',
   }),
+  coveragePathIgnorePatterns: [
+    'test-config',
+    'interfaces',
+    'index.ts',
+    '.query.ts',
+    '.db-port.ts',
+  ],
   coverageReporters: ['json-summary'],
   coverageDirectory: '../coverage',
 };
