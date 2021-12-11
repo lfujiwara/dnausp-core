@@ -4,9 +4,11 @@ import { ValorInteiroAnual } from '@domain/valores-anuais/valor-inteiro-anual';
 export enum OrigemInvestimento {
   'PROPRIO' = 'PROPRIO',
   'ANJO' = 'ANJO',
+  'CROWDFUNDING' = 'CROWDFUNDING',
   'VC' = 'VC',
   'PE' = 'PE',
   'PIPEFAPESP' = 'PIPEFAPESP',
+  'BNDES_FINEP' = 'BNDES_FINEP',
   'OUTROS' = 'OUTROS',
 }
 

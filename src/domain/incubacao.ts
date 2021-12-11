@@ -3,6 +3,8 @@ import { Result } from 'typescript-monads';
 export enum IncubadoraUSP {
   CIETEC = 'CIETEC',
   ESALQTEC = 'ESALQTEC',
+  HABITS = 'HABITS',
+  SUPERA = 'SUPERA',
 }
 
 export enum EstadoIncubacao {
