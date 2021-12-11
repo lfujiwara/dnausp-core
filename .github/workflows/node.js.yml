@@ -38,7 +38,7 @@ jobs:
   build-publish:
     needs: typecheck-lint-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'tag' && startsWith(github.ref_name, 'v')
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
 
     strategy:
       matrix:
