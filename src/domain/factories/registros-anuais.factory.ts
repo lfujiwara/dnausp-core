@@ -3,8 +3,9 @@ import {
   Investimento,
   OrigemInvestimento,
   RegistroAnual,
-  ValorMonetarioAnual,
-} from '@domain/valores-anuais/index';
+  ValorInteiroAnual,
+} from '@domain/valores-anuais';
+import { QuadroDeColaboradores } from '@domain/valores-anuais/quadro-de-colaboradores';
 
 export class RegistrosAnuaisFactory {
   static registroAnual(anoFiscal: number): Result<RegistroAnual, string[]> {
@@ -25,7 +26,7 @@ export class RegistrosAnuaisFactory {
     return Result.ok(undefined);
   }
 
-  static validateValorMonetarioAnual(
+  static validateValorInteiroAnual(
     anoFiscal: number,
     valor: number,
   ): Result<void, string[]> {
@@ -36,7 +37,7 @@ export class RegistrosAnuaisFactory {
     if (registroAnualResult.isFail())
       errors.push(...registroAnualResult.unwrapFail());
 
-    const valorResult = ValorMonetarioAnual.validateValor(valor);
+    const valorResult = ValorInteiroAnual.validateValor(valor);
     if (valorResult.isFail()) errors.push(...valorResult.unwrapFail());
 
     if (errors.length > 0) return Result.fail(errors);
@@ -44,22 +45,22 @@ export class RegistrosAnuaisFactory {
     return Result.ok(undefined);
   }
 
-  static valorMonetarioAnual(
+  static valorInteiroAnual(
     anoFiscal: number,
     valor: number,
-  ): Result<ValorMonetarioAnual, string[]> {
-    const validationResult = RegistrosAnuaisFactory.validateValorMonetarioAnual(
+  ): Result<ValorInteiroAnual, string[]> {
+    const validationResult = RegistrosAnuaisFactory.validateValorInteiroAnual(
       anoFiscal,
       valor,
     );
     if (validationResult.isFail())
       return Result.fail(validationResult.unwrapFail());
 
-    return Result.ok(new ValorMonetarioAnual(anoFiscal, valor));
+    return Result.ok(new ValorInteiroAnual(anoFiscal, valor));
   }
 
   static faturamento(anoFiscal: number, valor: number) {
-    return RegistrosAnuaisFactory.valorMonetarioAnual(anoFiscal, valor);
+    return RegistrosAnuaisFactory.valorInteiroAnual(anoFiscal, valor);
   }
 
   static investimento(
@@ -93,6 +94,34 @@ export class RegistrosAnuaisFactory {
 
     const origemResult = Investimento.validateOrigem(origem);
     if (origemResult.isFail()) errors.push(origemResult.unwrapFail());
+
+    if (errors.length > 0) return Result.fail(errors);
+    return Result.ok(undefined);
+  }
+
+  static quadroDeColaboradores(
+    anoFiscal: number,
+    valor: number,
+  ): Result<QuadroDeColaboradores, string[]> {
+    const validationResult =
+      RegistrosAnuaisFactory.validateQuadroDeColaboradores(anoFiscal, valor);
+    if (validationResult.isFail())
+      return Result.fail(validationResult.unwrapFail());
+
+    return Result.ok(new QuadroDeColaboradores(anoFiscal, valor));
+  }
+
+  static validateQuadroDeColaboradores(
+    anoFiscal: number,
+    valor: number,
+  ): Result<void, string[]> {
+    const errors: string[] = [];
+
+    const valorResult = QuadroDeColaboradores.validateValor(valor);
+    if (valorResult.isFail()) errors.push(valorResult.unwrapFail());
+
+    const anoFiscalResult = QuadroDeColaboradores.validateAno(anoFiscal);
+    if (anoFiscalResult.isFail()) errors.push(anoFiscalResult.unwrapFail());
 
     if (errors.length > 0) return Result.fail(errors);
     return Result.ok(undefined);

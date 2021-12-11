@@ -1,6 +1,6 @@
 import { Investimento, OrigemInvestimento } from '@domain';
 
-describe('Valor monetario anual', () => {
+describe('Investimento', () => {
   const validValue = 10000000;
   const invalidValue = 100000.32;
   const validOrigin = OrigemInvestimento.PE;

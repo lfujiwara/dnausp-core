@@ -34,7 +34,7 @@ export class AgregadoAnual<T extends RegistroAnual> {
     return Result.ok(undefined);
   }
 
-  public remove(anoFiscal: number) {
+  public remove(anoFiscal: number): Result<void, string> {
     const oldLength = this.valores.length;
     this.valores = this.valores.filter(
       (valor) => valor.anoFiscal !== anoFiscal,

@@ -1,13 +1,13 @@
-import { RegistrosAnuaisFactory, ValorMonetarioAnual } from '@domain';
+import { RegistrosAnuaisFactory, ValorInteiroAnual } from '@domain';
 
-describe('Valor monetario anual', () => {
+describe('Valor inteiro anual', () => {
   const validValue = 10000000;
   const invalidValue = 100000.32;
   const validYear = 2020;
 
   describe('Factory method (create)', () => {
     test('Success on valid values', () => {
-      const result = RegistrosAnuaisFactory.valorMonetarioAnual(
+      const result = RegistrosAnuaisFactory.valorInteiroAnual(
         validYear,
         validValue,
       );
@@ -15,7 +15,7 @@ describe('Valor monetario anual', () => {
     });
 
     test('Fail on invalid values', () => {
-      const result = RegistrosAnuaisFactory.valorMonetarioAnual(
+      const result = RegistrosAnuaisFactory.valorInteiroAnual(
         validYear,
         invalidValue,
       );
@@ -25,17 +25,15 @@ describe('Valor monetario anual', () => {
 
   describe('Constructor', () => {
     test('Success on valid values', () => {
-      expect(
-        () => new ValorMonetarioAnual(validYear, validValue),
-      ).not.toThrow();
+      expect(() => new ValorInteiroAnual(validYear, validValue)).not.toThrow();
     });
 
     test('Fail on invalid values', () => {
-      expect(() => new ValorMonetarioAnual(validYear, invalidValue)).toThrow();
+      expect(() => new ValorInteiroAnual(validYear, invalidValue)).toThrow();
     });
 
     test('Stores values correctly', () => {
-      const faturamento = new ValorMonetarioAnual(validYear, validValue);
+      const faturamento = new ValorInteiroAnual(validYear, validValue);
       expect(faturamento.valor).toBe(validValue);
       expect(faturamento.anoFiscal).toBe(validYear);
     });

@@ -1,8 +1,14 @@
 import { Result } from 'typescript-monads';
 import { v4 } from 'uuid';
 import { CNAE } from '@domain/cnae';
-import { Faturante, PerfilInvestimento } from '@domain/agregados-anuais';
+import {
+  HistoricoFaturamentos,
+  HistoricoInvestimentos,
+} from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
+import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
+import { Incubacao } from '@domain/incubacao';
+import { Socio } from '@domain/socio';
 
 export class Empresa {
   id: string;
@@ -15,8 +21,12 @@ export class Empresa {
   atividadePrincipal?: CNAE;
   atividadeSecundaria: CNAE[] = [];
   situacao?: string;
-  faturante: Faturante = new Faturante();
-  perfilInvestimento: PerfilInvestimento = new PerfilInvestimento();
+  historicoFaturamentos: HistoricoFaturamentos = new HistoricoFaturamentos();
+  historicoInvestimentos: HistoricoInvestimentos = new HistoricoInvestimentos();
+  historicoQuadroDeColaboradores: HistoricoQuadroDeColaboradores =
+    new HistoricoQuadroDeColaboradores();
+  incubacoes: Incubacao[] = [];
+  socios: Socio[] = [];
 
   constructor(data: {
     id: string;
@@ -29,8 +39,11 @@ export class Empresa {
     atividadePrincipal?: CNAE;
     atividadeSecundaria?: CNAE[];
     situacao?: string;
-    faturante?: Faturante;
-    perfilInvestimento?: PerfilInvestimento;
+    historicoFaturamentos?: HistoricoFaturamentos;
+    historicoInvestimentos?: HistoricoInvestimentos;
+    historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
+    incubacoes?: Incubacao[];
+    socios?: Socio[];
   }) {
     if (data.estrangeira && !data.idEstrangeira)
       throw new Error('Empresa estrangeira sem id estrangeira');
@@ -49,9 +62,15 @@ export class Empresa {
     this.atividadePrincipal = data.atividadePrincipal;
     this.atividadeSecundaria = data.atividadeSecundaria || [];
     this.situacao = data.situacao;
-    this.faturante = data.faturante || this.faturante;
-    this.perfilInvestimento =
-      data.perfilInvestimento || this.perfilInvestimento;
+    this.historicoFaturamentos =
+      data.historicoFaturamentos || this.historicoFaturamentos;
+    this.historicoInvestimentos =
+      data.historicoInvestimentos || this.historicoInvestimentos;
+    this.historicoQuadroDeColaboradores =
+      data.historicoQuadroDeColaboradores ||
+      this.historicoQuadroDeColaboradores;
+    this.incubacoes = data.incubacoes || this.incubacoes;
+    this.socios = data.socios || this.socios;
   }
 
   static create(data: {
@@ -64,8 +83,11 @@ export class Empresa {
     atividadePrincipal?: CNAE;
     atividadeSecundaria: CNAE[];
     situacao?: string;
-    faturante?: Faturante;
-    perfilInvestimento?: PerfilInvestimento;
+    historicoFaturamentos?: HistoricoFaturamentos;
+    historicoInvestimentos?: HistoricoInvestimentos;
+    historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
+    incubacoes?: Incubacao[];
+    socios?: Socio[];
   }): Result<Empresa, string[]> {
     const errors: string[] = [];
     if (data.estrangeira && !data.idEstrangeira)

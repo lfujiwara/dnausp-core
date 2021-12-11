@@ -1,3 +1,3 @@
-import { ValorMonetarioAnual } from '@domain/valores-anuais/valor-monetario-anual';
+import { ValorInteiroAnual } from '@domain/valores-anuais/valor-inteiro-anual';
 
-export class Faturamento extends ValorMonetarioAnual {}
+export class Faturamento extends ValorInteiroAnual {}

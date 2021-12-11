@@ -25,17 +25,14 @@ export class AddFaturamentoMutation {
     if (empresaResult.isFail()) return Result.fail(['Empresa não encontrada']);
 
     const empresa = empresaResult.unwrap();
-    const addFaturamentoResult = empresa.faturante.add(
+    const addFaturamentoResult = empresa.historicoFaturamentos.add(
       faturamentoResult.unwrap(),
     );
 
     if (addFaturamentoResult.isFail())
       return Result.fail([addFaturamentoResult.unwrapFail()]);
 
-    const result = await this.port.addFaturamentoToEmpresa(empresa.id, [
-      faturamentoResult.unwrap(),
-    ]);
-
+    const result = await this.port.save(empresa);
     if (result.isFail()) return Result.fail([result.unwrapFail()]);
 
     return Result.ok(result.unwrap());

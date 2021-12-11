@@ -4,9 +4,13 @@ import {
   CNAE,
   CNPJ,
   Empresa,
-  Faturante,
+  OrigemInvestimento,
   RegistrosAnuaisFactory,
 } from '@domain';
+import { EstadoIncubacao, Incubacao } from '@domain/incubacao';
+import { VinculoUniversidade } from '@domain/vinculo-universidade';
+import { Socio } from '@domain/socio';
+import { TipoVinculo } from '@domain/enums/tipo-vinculo';
 
 export interface EmpresaFactoryCreateInput {
   idEstrangeira?: number;
@@ -22,10 +26,28 @@ export interface EmpresaFactoryCreateInput {
     anoFiscal: number;
     valor: number;
   }[];
-  investimentos?: {
+  historicoInvestimentos?: {
     anoFiscal: number;
     valor: number;
     origem: string;
+  }[];
+  historicoQuadroDeColaboradores?: {
+    anoFiscal: number;
+    valor: number;
+  }[];
+  incubacoes?: {
+    incubadora: string;
+    estado: string;
+  }[];
+  socios?: {
+    nome: string;
+    email?: string;
+    telefone?: string;
+    vinculo: {
+      tipo: TipoVinculo;
+      NUSP?: string;
+      instituto?: string;
+    };
   }[];
 }
 
@@ -55,25 +77,23 @@ export class EmpresaFactory {
     if (anoDeFundacaoResult.isFail())
       errors.push(anoDeFundacaoResult.unwrapFail());
 
-    const faturamentos =
-      (input.faturamentos || [])
-        .map((f) => RegistrosAnuaisFactory.faturamento(f.anoFiscal, f.valor))
-        .filter((f) => f.isOk())
-        .map((f) => f.unwrap()) || [];
+    const historicoFaturamentosResult = this.extractHistoricoFaturamento(input);
+    if (historicoFaturamentosResult.isFail())
+      errors.push(historicoFaturamentosResult.unwrapFail());
 
-    const faturamentosResult = Faturante.validateValores(faturamentos);
-    if (faturamentosResult.isFail())
-      errors.push(faturamentosResult.unwrapFail());
+    const historicoInvestimentosResult =
+      this.extractHistoricoInvestimentos(input);
+    if (historicoInvestimentosResult.isFail())
+      errors.push(...historicoInvestimentosResult.unwrapFail());
 
-    const faturanteResult = AgregadosAnuaisFactory.faturante(faturamentos);
+    const historicoQuadroDeColaboradoresResult =
+      this.extractHistoricoQuadroDeColaboradores(input);
+    if (historicoQuadroDeColaboradoresResult.isFail())
+      errors.push(...historicoQuadroDeColaboradoresResult.unwrapFail());
 
-    const investimentos =
-      (input.investimentos || [])
-        .map((f) => RegistrosAnuaisFactory.investimento(f.anoFiscal, f.valor))
-        .filter((f) => f.isOk())
-        .map((f) => f.unwrap()) || [];
-    const perfilInvestimentoResult =
-      AgregadosAnuaisFactory.perfilInvestimento(investimentos);
+    const incubacoesResult = this.extractIncubacoes(input);
+    if (incubacoesResult.isFail())
+      errors.push(...incubacoesResult.unwrapFail());
 
     if (errors.length > 0) return Result.fail(errors);
 
@@ -89,12 +109,90 @@ export class EmpresaFactory {
       situacao: input.situacao,
       estrangeira: !!input.estrangeira,
       idEstrangeira: input.idEstrangeira,
-      faturante: faturanteResult.unwrap(),
-      perfilInvestimento: perfilInvestimentoResult.unwrap(),
+      historicoFaturamentos: historicoFaturamentosResult.unwrap(),
+      historicoInvestimentos: historicoInvestimentosResult.unwrap(),
+      historicoQuadroDeColaboradores:
+        historicoQuadroDeColaboradoresResult.unwrap(),
+      incubacoes: incubacoesResult.unwrap(),
     });
     if (empresaResult.isFail()) errors.push(...empresaResult.unwrapFail());
     if (errors.length > 0) return Result.fail(errors);
 
     return Result.ok(empresaResult.unwrap());
+  }
+
+  private static extractHistoricoFaturamento(input: EmpresaFactoryCreateInput) {
+    const faturamentos =
+      (input.faturamentos || [])
+        .map((f) => RegistrosAnuaisFactory.faturamento(f.anoFiscal, f.valor))
+        .filter((f) => f.isOk())
+        .map((f) => f.unwrap()) || [];
+
+    return AgregadosAnuaisFactory.historicoFaturamentos(faturamentos);
+  }
+
+  private static extractHistoricoInvestimentos(
+    input: EmpresaFactoryCreateInput,
+  ) {
+    const investimentos =
+      (input.historicoInvestimentos || [])
+        .map((f) =>
+          RegistrosAnuaisFactory.investimento(
+            f.anoFiscal,
+            f.valor,
+            f.origem as OrigemInvestimento,
+          ),
+        )
+        .filter((f) => f.isOk())
+        .map((f) => f.unwrap()) || [];
+    return AgregadosAnuaisFactory.historicoInvestimentos(investimentos);
+  }
+
+  private static extractHistoricoQuadroDeColaboradores(
+    input: EmpresaFactoryCreateInput,
+  ) {
+    const quadrosDeColaboradores = (input.historicoQuadroDeColaboradores || [])
+      .map((f) =>
+        RegistrosAnuaisFactory.quadroDeColaboradores(f.anoFiscal, f.valor),
+      )
+      .filter((f) => f.isOk())
+      .map((f) => f.unwrap());
+    return AgregadosAnuaisFactory.historicoQuadroDeColaboradores(
+      quadrosDeColaboradores,
+    );
+  }
+
+  private static extractIncubacoes(
+    input: EmpresaFactoryCreateInput,
+  ): Result<Incubacao[], string[]> {
+    const incubacoes = (input.incubacoes || [])
+      .map((f) => Incubacao.create(f.incubadora, f.estado as EstadoIncubacao))
+      .filter((f) => f.isOk())
+      .map((f) => f.unwrap());
+    return Result.ok(incubacoes);
+  }
+
+  private static extractSocios(
+    input: EmpresaFactoryCreateInput,
+  ): Result<Socio[], string[]> {
+    const socios = [];
+    for (const data of input.socios || []) {
+      const vinculoResult = VinculoUniversidade.create(
+        data.vinculo.tipo,
+        data.vinculo.NUSP,
+        data.vinculo.instituto,
+      );
+      if (vinculoResult.isFail()) continue;
+
+      const sociosResult = Socio.create(
+        data.nome,
+        data.email,
+        data.telefone,
+        vinculoResult.unwrap(),
+      );
+      if (sociosResult.isOk()) socios.push(sociosResult.unwrap());
+    }
+
+    return Result.ok(socios);
   }
 }

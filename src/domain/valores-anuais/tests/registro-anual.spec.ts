@@ -1,6 +1,6 @@
 import { RegistroAnual } from '@domain';
 
-describe('Valor monetario anual', () => {
+describe('Registro anual', () => {
   const validYear = 2020;
   const invalidYear = -1;
 
