@@ -7,6 +7,7 @@ import {
   OrigemInvestimento,
   RegistrosAnuaisFactory,
 } from '@domain';
+import { EstadoIncubacao, Incubacao } from '@domain/incubacao';
 
 export interface EmpresaFactoryCreateInput {
   idEstrangeira?: number;
@@ -30,6 +31,10 @@ export interface EmpresaFactoryCreateInput {
   historicoQuadroDeColaboradores?: {
     anoFiscal: number;
     valor: number;
+  }[];
+  incubacoes?: {
+    incubadora: string;
+    estado: string;
   }[];
 }
 
@@ -73,6 +78,10 @@ export class EmpresaFactory {
     if (historicoQuadroDeColaboradoresResult.isFail())
       errors.push(...historicoQuadroDeColaboradoresResult.unwrapFail());
 
+    const incubacoesResult = this.extractIncubacoes(input);
+    if (incubacoesResult.isFail())
+      errors.push(...incubacoesResult.unwrapFail());
+
     if (errors.length > 0) return Result.fail(errors);
 
     const empresaResult = Empresa.create({
@@ -91,6 +100,7 @@ export class EmpresaFactory {
       historicoInvestimentos: historicoInvestimentosResult.unwrap(),
       historicoQuadroDeColaboradores:
         historicoQuadroDeColaboradoresResult.unwrap(),
+      incubacoes: incubacoesResult.unwrap(),
     });
     if (empresaResult.isFail()) errors.push(...empresaResult.unwrapFail());
     if (errors.length > 0) return Result.fail(errors);
@@ -137,5 +147,15 @@ export class EmpresaFactory {
     return AgregadosAnuaisFactory.historicoQuadroDeColaboradores(
       quadrosDeColaboradores,
     );
+  }
+
+  private static extractIncubacoes(
+    input: EmpresaFactoryCreateInput,
+  ): Result<Incubacao[], string[]> {
+    const incubacoes = (input.incubacoes || [])
+      .map((f) => Incubacao.create(f.incubadora, f.estado as EstadoIncubacao))
+      .filter((f) => f.isOk())
+      .map((f) => f.unwrap());
+    return Result.ok(incubacoes);
   }
 }

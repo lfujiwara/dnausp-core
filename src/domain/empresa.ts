@@ -7,6 +7,7 @@ import {
 } from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
 import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
+import { Incubacao } from '@domain/incubacao';
 
 export class Empresa {
   id: string;
@@ -23,6 +24,7 @@ export class Empresa {
   historicoInvestimentos: HistoricoInvestimentos = new HistoricoInvestimentos();
   historicoQuadroDeColaboradores: HistoricoQuadroDeColaboradores =
     new HistoricoQuadroDeColaboradores();
+  incubacoes: Incubacao[] = [];
 
   constructor(data: {
     id: string;
@@ -38,6 +40,7 @@ export class Empresa {
     historicoFaturamentos?: HistoricoFaturamentos;
     historicoInvestimentos?: HistoricoInvestimentos;
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
+    incubacoes?: Incubacao[];
   }) {
     if (data.estrangeira && !data.idEstrangeira)
       throw new Error('Empresa estrangeira sem id estrangeira');
@@ -63,6 +66,7 @@ export class Empresa {
     this.historicoQuadroDeColaboradores =
       data.historicoQuadroDeColaboradores ||
       this.historicoQuadroDeColaboradores;
+    this.incubacoes = data.incubacoes || this.incubacoes;
   }
 
   static create(data: {
@@ -78,6 +82,7 @@ export class Empresa {
     historicoFaturamentos?: HistoricoFaturamentos;
     historicoInvestimentos?: HistoricoInvestimentos;
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
+    incubacoes?: Incubacao[];
   }): Result<Empresa, string[]> {
     const errors: string[] = [];
     if (data.estrangeira && !data.idEstrangeira)

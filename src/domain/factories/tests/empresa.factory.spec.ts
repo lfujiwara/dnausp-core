@@ -1,5 +1,6 @@
 import { UpsertEmpresaMutationInput } from '@app';
 import { EmpresaFactory, OrigemInvestimento } from '@domain';
+import { EstadoIncubacao, IncubadoraUSP } from '@domain/incubacao';
 
 const matchAnoValor = (a, b) =>
   a.anoFiscal === b.anoFiscal && a.valor === b.valor;
@@ -35,6 +36,12 @@ describe('Empresa factory', () => {
       {
         anoFiscal: 2010,
         valor: 20,
+      },
+    ],
+    incubacoes: [
+      {
+        estado: EstadoIncubacao.GRADUADA,
+        incubadora: IncubadoraUSP.ESALQTEC,
       },
     ],
   };
@@ -75,6 +82,14 @@ describe('Empresa factory', () => {
     expect(
       empresa.historicoQuadroDeColaboradores.valores.every((x) =>
         input.historicoQuadroDeColaboradores.some(matchAnoValor.bind(null, x)),
+      ),
+    ).toBeTruthy();
+
+    expect(
+      empresa.incubacoes.every((x) =>
+        input.incubacoes.some(
+          (y) => x.incubadora === y.incubadora && x.estado === y.estado,
+        ),
       ),
     ).toBeTruthy();
   });
