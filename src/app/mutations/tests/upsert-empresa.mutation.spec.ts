@@ -1,16 +1,59 @@
 import { UpsertEmpresaMutation, UpsertEmpresaMutationInput } from '@app';
 import { Result } from 'typescript-monads';
-import { CNPJ, EmpresaFactory } from '@domain';
+import { CNPJ, EmpresaFactory, OrigemInvestimento } from '@domain';
+import { EstadoIncubacao, IncubadoraUSP } from '@domain/incubacao';
+import { TipoVinculo } from '@domain/enums/tipo-vinculo';
+import { Instituto } from '@domain/enums/index';
 
 describe('Upsert empresa mutation', () => {
   const input: UpsertEmpresaMutationInput = {
     cnpj: '43.009.980/0001-04',
-    anoFundacao: 2010,
+    anoFundacao: 2011,
     atividadePrincipal: '7020400',
-    atividadeSecundaria: [],
-    faturamentos: [],
-    nomeFantasia: 'Empresa Teste',
-    razaoSocial: 'Empresa Teste Ltda',
+    atividadeSecundaria: ['7210000'],
+    faturamentos: [
+      {
+        anoFiscal: 2011,
+        valor: 90 * 1000 * 100,
+      },
+      {
+        anoFiscal: 2012,
+        valor: 240 * 1000 * 100,
+      },
+    ],
+    nomeFantasia: 'Empresa Teste ABC',
+    razaoSocial: 'Empresa Teste ABC Ltda',
+    historicoInvestimentos: [
+      {
+        anoFiscal: 2010,
+        valor: 100 * 1000 * 100,
+        origem: OrigemInvestimento.BNDES_FINEP,
+      },
+    ],
+    historicoQuadroDeColaboradores: [
+      {
+        anoFiscal: 2010,
+        valor: 20,
+      },
+    ],
+    incubacoes: [
+      {
+        estado: EstadoIncubacao.GRADUADA,
+        incubadora: IncubadoraUSP.SUPERA,
+      },
+    ],
+    socios: [
+      {
+        nome: 'John Doe',
+        email: 'johndoe@gmail.com',
+        telefone: '+5511999999999',
+        vinculo: {
+          tipo: TipoVinculo.GRADUACAO,
+          NUSP: '123456789',
+          instituto: Instituto.IME,
+        },
+      },
+    ],
   };
 
   const sampleEmpresa = EmpresaFactory.create(input).unwrap();

@@ -1,6 +1,8 @@
 import { UpsertEmpresaMutationInput } from '@app';
 import { EmpresaFactory, OrigemInvestimento } from '@domain';
 import { EstadoIncubacao, IncubadoraUSP } from '@domain/incubacao';
+import { Instituto } from '@domain/enums/instituto';
+import { TipoVinculo } from '@domain/enums/tipo-vinculo';
 
 const matchAnoValor = (a, b) =>
   a.anoFiscal === b.anoFiscal && a.valor === b.valor;
@@ -42,6 +44,18 @@ describe('Empresa factory', () => {
       {
         estado: EstadoIncubacao.GRADUADA,
         incubadora: IncubadoraUSP.ESALQTEC,
+      },
+    ],
+    socios: [
+      {
+        nome: 'John Doe',
+        email: 'johndoe@gmail.com',
+        telefone: '+5511999999999',
+        vinculo: {
+          tipo: TipoVinculo.DOCENTE,
+          NUSP: '123456789',
+          instituto: Instituto.FAU,
+        },
       },
     ],
   };
@@ -89,6 +103,20 @@ describe('Empresa factory', () => {
       empresa.incubacoes.every((x) =>
         input.incubacoes.some(
           (y) => x.incubadora === y.incubadora && x.estado === y.estado,
+        ),
+      ),
+    ).toBeTruthy();
+
+    expect(
+      empresa.socios.every((x) =>
+        input.socios.some(
+          (y) =>
+            x.nome === y.nome &&
+            x.email === y.email &&
+            x.telefone === y.telefone &&
+            x.vinculo.tipo === y.vinculo.tipo &&
+            x.vinculo.NUSP === y.vinculo.NUSP &&
+            x.vinculo.instituto === y.vinculo.instituto,
         ),
       ),
     ).toBeTruthy();

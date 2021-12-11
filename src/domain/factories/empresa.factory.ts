@@ -8,6 +8,9 @@ import {
   RegistrosAnuaisFactory,
 } from '@domain';
 import { EstadoIncubacao, Incubacao } from '@domain/incubacao';
+import { VinculoUniversidade } from '@domain/vinculo-universidade';
+import { Socio } from '@domain/socio';
+import { TipoVinculo } from '@domain/enums/tipo-vinculo';
 
 export interface EmpresaFactoryCreateInput {
   idEstrangeira?: number;
@@ -35,6 +38,16 @@ export interface EmpresaFactoryCreateInput {
   incubacoes?: {
     incubadora: string;
     estado: string;
+  }[];
+  socios?: {
+    nome: string;
+    email?: string;
+    telefone?: string;
+    vinculo: {
+      tipo: TipoVinculo;
+      NUSP?: string;
+      instituto?: string;
+    };
   }[];
 }
 
@@ -157,5 +170,29 @@ export class EmpresaFactory {
       .filter((f) => f.isOk())
       .map((f) => f.unwrap());
     return Result.ok(incubacoes);
+  }
+
+  private static extractSocios(
+    input: EmpresaFactoryCreateInput,
+  ): Result<Socio[], string[]> {
+    const socios = [];
+    for (const data of input.socios || []) {
+      const vinculoResult = VinculoUniversidade.create(
+        data.vinculo.tipo,
+        data.vinculo.NUSP,
+        data.vinculo.instituto,
+      );
+      if (vinculoResult.isFail()) continue;
+
+      const sociosResult = Socio.create(
+        data.nome,
+        data.email,
+        data.telefone,
+        vinculoResult.unwrap(),
+      );
+      if (sociosResult.isOk()) socios.push(sociosResult.unwrap());
+    }
+
+    return Result.ok(socios);
   }
 }

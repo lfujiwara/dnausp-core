@@ -4,7 +4,7 @@ import {
   OrigemInvestimento,
   RegistroAnual,
   ValorInteiroAnual,
-} from '@domain/valores-anuais/index';
+} from '@domain/valores-anuais';
 import { QuadroDeColaboradores } from '@domain/valores-anuais/quadro-de-colaboradores';
 
 export class RegistrosAnuaisFactory {
