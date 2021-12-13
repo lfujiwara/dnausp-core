@@ -15,6 +15,5 @@ module.exports = {
     '.query.ts',
     '.db-port.ts',
   ],
-  coverageReporters: ['json-summary'],
   coverageDirectory: '../coverage',
 };
