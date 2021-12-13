@@ -1,14 +1,12 @@
 import { Result } from 'typescript-monads';
 import { v4 } from 'uuid';
 import { CNAE } from '@domain/cnae';
-import {
-  HistoricoFaturamentos,
-  HistoricoInvestimentos,
-} from '@domain/agregados-anuais';
+import { HistoricoFaturamentos } from '@domain/agregados-anuais';
 import { CNPJ } from '@domain/cnpj';
 import { HistoricoQuadroDeColaboradores } from '@domain/agregados-anuais/historico-quadro-de-colaboradores';
 import { Incubacao } from '@domain/incubacao';
 import { Socio } from '@domain/socio';
+import { Investimento } from '@domain/valores-anuais/index';
 
 export class Empresa {
   id: string;
@@ -22,7 +20,7 @@ export class Empresa {
   atividadeSecundaria: CNAE[] = [];
   situacao?: string;
   historicoFaturamentos: HistoricoFaturamentos = new HistoricoFaturamentos();
-  historicoInvestimentos: HistoricoInvestimentos = new HistoricoInvestimentos();
+  historicoInvestimentos: Investimento[] = [];
   historicoQuadroDeColaboradores: HistoricoQuadroDeColaboradores =
     new HistoricoQuadroDeColaboradores();
   incubacoes: Incubacao[] = [];
@@ -40,7 +38,7 @@ export class Empresa {
     atividadeSecundaria?: CNAE[];
     situacao?: string;
     historicoFaturamentos?: HistoricoFaturamentos;
-    historicoInvestimentos?: HistoricoInvestimentos;
+    historicoInvestimentos?: Investimento[];
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
     incubacoes?: Incubacao[];
     socios?: Socio[];
@@ -84,7 +82,7 @@ export class Empresa {
     atividadeSecundaria: CNAE[];
     situacao?: string;
     historicoFaturamentos?: HistoricoFaturamentos;
-    historicoInvestimentos?: HistoricoInvestimentos;
+    historicoInvestimentos?: Investimento[];
     historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
     incubacoes?: Incubacao[];
     socios?: Socio[];

@@ -76,40 +76,42 @@ describe('Empresa factory', () => {
     );
 
     expect(
-      empresa.atividadeSecundaria.every((x) =>
-        input.atividadeSecundaria.includes(x.unFormat()),
+      input.atividadeSecundaria.every((x) =>
+        empresa.atividadeSecundaria.some((y) => y.unFormat() === x),
       ),
     ).toBeTruthy();
 
     expect(
-      empresa.historicoFaturamentos.valores.every((x) =>
-        input.faturamentos.some(matchAnoValor.bind(null, x)),
+      input.faturamentos.every((x) =>
+        empresa.historicoFaturamentos.valores.some(matchAnoValor.bind(null, x)),
       ),
     ).toBeTruthy();
 
     expect(
-      empresa.historicoInvestimentos.valores.every((x) =>
-        input.historicoInvestimentos.some(matchAnoValorOrigem.bind(null, x)),
+      input.historicoInvestimentos.every((x) =>
+        empresa.historicoInvestimentos.some(matchAnoValorOrigem.bind(null, x)),
       ),
     ).toBeTruthy();
 
     expect(
-      empresa.historicoQuadroDeColaboradores.valores.every((x) =>
-        input.historicoQuadroDeColaboradores.some(matchAnoValor.bind(null, x)),
+      input.historicoQuadroDeColaboradores.every((x) =>
+        empresa.historicoQuadroDeColaboradores.valores.some(
+          matchAnoValor.bind(null, x),
+        ),
       ),
     ).toBeTruthy();
 
     expect(
-      empresa.incubacoes.every((x) =>
-        input.incubacoes.some(
+      input.incubacoes.every((x) =>
+        empresa.incubacoes.some(
           (y) => x.incubadora === y.incubadora && x.estado === y.estado,
         ),
       ),
     ).toBeTruthy();
 
     expect(
-      empresa.socios.every((x) =>
-        input.socios.some(
+      input.socios.every((x) =>
+        empresa.socios.some(
           (y) =>
             x.nome === y.nome &&
             x.email === y.email &&
