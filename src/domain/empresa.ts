@@ -8,6 +8,26 @@ import { Incubacao } from '@domain/incubacao';
 import { Socio } from '@domain/socio';
 import { Investimento } from '@domain/valores-anuais/index';
 
+type EmpresaConstructorParams = {
+  id: string;
+  idEstrangeira?: number;
+  estrangeira?: boolean;
+  cnpj?: CNPJ;
+  razaoSocial?: string;
+  nomeFantasia?: string;
+  anoFundacao: number;
+  atividadePrincipal?: CNAE;
+  atividadeSecundaria?: CNAE[];
+  situacao?: string;
+  historicoFaturamentos?: HistoricoFaturamentos;
+  historicoInvestimentos?: Investimento[];
+  historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
+  incubacoes?: Incubacao[];
+  socios?: Socio[];
+};
+
+type EmpresaCreateParams = Omit<EmpresaConstructorParams, 'id'>;
+
 export class Empresa {
   id: string;
   idEstrangeira?: number;
@@ -26,23 +46,7 @@ export class Empresa {
   incubacoes: Incubacao[] = [];
   socios: Socio[] = [];
 
-  constructor(data: {
-    id: string;
-    idEstrangeira?: number;
-    estrangeira?: boolean;
-    cnpj?: CNPJ;
-    razaoSocial?: string;
-    nomeFantasia?: string;
-    anoFundacao: number;
-    atividadePrincipal?: CNAE;
-    atividadeSecundaria?: CNAE[];
-    situacao?: string;
-    historicoFaturamentos?: HistoricoFaturamentos;
-    historicoInvestimentos?: Investimento[];
-    historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
-    incubacoes?: Incubacao[];
-    socios?: Socio[];
-  }) {
+  constructor(data: EmpresaConstructorParams) {
     if (data.estrangeira && !data.idEstrangeira)
       throw new Error('Empresa estrangeira sem id estrangeira');
     if (!data.estrangeira && !data.cnpj)
@@ -71,22 +75,7 @@ export class Empresa {
     this.socios = data.socios || this.socios;
   }
 
-  static create(data: {
-    idEstrangeira?: number;
-    estrangeira: boolean;
-    cnpj?: CNPJ;
-    razaoSocial?: string;
-    nomeFantasia?: string;
-    anoFundacao: number;
-    atividadePrincipal?: CNAE;
-    atividadeSecundaria: CNAE[];
-    situacao?: string;
-    historicoFaturamentos?: HistoricoFaturamentos;
-    historicoInvestimentos?: Investimento[];
-    historicoQuadroDeColaboradores?: HistoricoQuadroDeColaboradores;
-    incubacoes?: Incubacao[];
-    socios?: Socio[];
-  }): Result<Empresa, string[]> {
+  static create(data: EmpresaCreateParams): Result<Empresa, string[]> {
     const errors: string[] = [];
     if (data.estrangeira && !data.idEstrangeira)
       errors.push('Empresa estrangeira sem id estrangeira');
