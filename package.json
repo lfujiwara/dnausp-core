@@ -1,13 +1,13 @@
 {
   "name": "@dnausp/core",
-  "version": "0.0.1-alpha.19",
+  "version": "0.0.1-alpha.20",
   "main": "dist/index.js",
   "release": {
     "pkgRoot": "./dist"
   },
   "scripts": {
     "prepare": "husky install",
-    "build": "ttsc",
+    "build": "ttsc --p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"src/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest --coverage",
