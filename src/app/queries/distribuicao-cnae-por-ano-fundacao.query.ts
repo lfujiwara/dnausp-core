@@ -3,7 +3,7 @@ export type DistribuicaoCnaePorAnoFundacaoQueryOutput = {
   distribuicao: {
     [cnae: string]: number;
   };
-};
+}[];
 
 export abstract class DistribuicaoCnaePorAnoFundacaoQuery {
   abstract execute(): Promise<DistribuicaoCnaePorAnoFundacaoQueryOutput>;

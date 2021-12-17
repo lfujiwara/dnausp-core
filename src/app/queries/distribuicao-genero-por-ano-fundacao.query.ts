@@ -4,7 +4,7 @@ export type DistribuicaoGeneroPorAnoFundacaoQueryOutput = {
     genero: string;
     qtd: number;
   }[];
-};
+}[];
 
 export abstract class DistribuicaoGeneroPorAnoFundacaoQuery {
   abstract execute(): Promise<DistribuicaoGeneroPorAnoFundacaoQueryOutput>;
