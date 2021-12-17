@@ -55,11 +55,13 @@ export class EmpresaFactory {
   static create(input: EmpresaFactoryCreateInput): Result<Empresa, string[]> {
     const errors: string[] = [];
 
-    const cnpjResult = CNPJ.create(input.cnpj + '');
+    let cnpjResult: Result<CNPJ | undefined, string>;
+    if (input.estrangeira) cnpjResult = Result.ok(undefined);
+    else cnpjResult = CNPJ.create(input.cnpj);
     if (cnpjResult.isFail()) errors.push(cnpjResult.unwrapFail());
 
     const atividadePrincipalResult = CNAE.create(input.atividadePrincipal + '');
-    if (atividadePrincipalResult.isFail())
+    if (atividadePrincipalResult.isFail() && !input.estrangeira)
       errors.push(atividadePrincipalResult.unwrapFail());
 
     const atividadeSecundariaResults = (input.atividadeSecundaria || []).map(
