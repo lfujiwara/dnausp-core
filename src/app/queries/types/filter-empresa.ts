@@ -1,10 +1,9 @@
-import { Instituto, TipoVinculo } from '@domain';
-
 export interface FilterEmpresa {
-  instituto?: Instituto[];
-  tipoVinculo?: TipoVinculo[];
+  instituto?: string[];
+  tipoVinculo?: string[];
   origemInvestimento?: string[];
   atividadePrincipal?: string[];
+  incubadora?: string[];
   anoFundacaoMin?: number;
   anoFundacaoMax?: number;
 }
