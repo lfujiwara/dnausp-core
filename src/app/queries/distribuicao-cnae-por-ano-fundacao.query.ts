@@ -1,5 +1,6 @@
 export type DistribuicaoCnaePorAnoFundacaoQueryOutput = {
-  [instituto: string]: {
+  ano: number;
+  distribuicao: {
     [cnae: string]: number;
   };
 };
