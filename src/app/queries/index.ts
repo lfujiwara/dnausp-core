@@ -6,6 +6,4 @@ export * from './distribuicao-genero-por-ano-fundacao.query';
 export * from './distribuicao-genero-por-instituto.query';
 export * from './distribuicao-instituto-por-cnae.query';
 export * from './faturamento.query';
-export * from './qtd-colaboradores-por-instituto.query';
-export * from './qtd-empresas-por-ano-de-fundacao.query';
 export * from './types/filter-empresa';

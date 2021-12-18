@@ -60,9 +60,11 @@ export class EmpresaFactory {
     else cnpjResult = CNPJ.create(input.cnpj);
     if (cnpjResult.isFail()) errors.push(cnpjResult.unwrapFail());
 
-    const atividadePrincipalResult = CNAE.create(input.atividadePrincipal + '');
+    let atividadePrincipalResult = CNAE.create(input.atividadePrincipal + '');
     if (atividadePrincipalResult.isFail() && !input.estrangeira)
       errors.push(atividadePrincipalResult.unwrapFail());
+    if (atividadePrincipalResult.isFail() && input.estrangeira)
+      atividadePrincipalResult = Result.ok(undefined);
 
     const atividadeSecundariaResults = (input.atividadeSecundaria || []).map(
       (as) => CNAE.create(as),

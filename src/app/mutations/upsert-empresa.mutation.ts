@@ -15,11 +15,15 @@ export class UpsertEmpresaMutation {
   async mutate(
     input: UpsertEmpresaMutationInput,
   ): Promise<Result<Empresa, string[]>> {
-    const cnpjResult = CNPJ.create(input.cnpj);
-    const existingResult = await this.port.findOneByIdentifiers(
-      cnpjResult.isOk() ? cnpjResult.unwrap() : undefined,
-      input.idEstrangeira,
-    );
+    let existingResult;
+
+    if (!!input.cnpj) {
+      const cnpjResult = CNPJ.create(input.cnpj);
+      existingResult = await this.port.findOneByIdentifiers(
+        cnpjResult.isOk() ? cnpjResult.unwrap() : undefined,
+        input.idEstrangeira,
+      );
+    } else existingResult = Result.fail('Empresa não encontrada');
 
     const empresaResult = EmpresaFactory.create(input);
     if (empresaResult.isFail())
